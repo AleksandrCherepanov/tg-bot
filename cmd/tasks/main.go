@@ -8,27 +8,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tg-bot/internal/telegram"
 )
-
-type Chat struct {
-	ID        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-}
-
-type Message struct {
-	MessageID int  `json:"message_id"`
-	Chat      Chat `json:"chat"`
-}
-
-type Update struct {
-	UpdateId int     `json:"update_id"`
-	Message  Message `json:"message"`
-}
-
-func (c *Chat) getName() string {
-	return c.FirstName + " " + c.LastName
-}
 
 func greetings(w http.ResponseWriter, req *http.Request) {
 	body, err := io.ReadAll(req.Body)
@@ -37,21 +18,25 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	fmt.Println("REQUEST:")
 	fmt.Println(string(body))
+	fmt.Println()
 	if len(body) == 0 {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	update := &Update{}
+	update := &telegram.Update{}
 	json.Unmarshal(body, update)
+
+	chatId := update.Message.Chat.Id
+	name := update.Message.Chat.GetName()
 
 	request, err := http.NewRequest(
 		"POST",
-		"https://api.telegram.org/<token>/sendMessage",
-		bytes.NewBuffer([]byte(`
-{"chat_id": `+strconv.Itoa(update.Message.Chat.ID)+`, "text": "Hi, `+update.Message.Chat.getName()+`!"}`)),
+		"https://api.telegram.org/bot/sendMessage",
+		bytes.NewBuffer([]byte(`{"chat_id": `+strconv.FormatInt(chatId, 10)+`, "text": "Hi, `+name+`!"}`)),
 	)
 	request.Header.Add("Content-Type", "application/json")
 
@@ -71,7 +56,10 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	fmt.Println("RESPONSE:")
 	fmt.Println(string(rBody))
+	fmt.Println()
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
