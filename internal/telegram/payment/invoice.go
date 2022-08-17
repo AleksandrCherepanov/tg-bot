@@ -1,4 +1,4 @@
-package telegram
+package payment
 
 type Invoice struct {
 	Title          string `json:"title"`

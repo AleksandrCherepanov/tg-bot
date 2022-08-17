@@ -1,4 +1,4 @@
-package telegram
+package payment
 
 type OrderInfo struct {
 	Name            *string          `json:"name"`

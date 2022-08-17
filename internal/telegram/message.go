@@ -1,12 +1,18 @@
 package telegram
 
+import (
+	"tg-bot/internal/telegram/passport"
+	"tg-bot/internal/telegram/payment"
+	"tg-bot/internal/telegram/user"
+)
+
 type Message struct {
 	MessageId                     int64                          `json:"messageId"`
-	From                          *User                          `json:"from"`
+	From                          *user.User                     `json:"from"`
 	SenderChat                    *Chat                          `json:"sender_chat"`
 	Date                          int64                          `json:"date"`
 	Chat                          *Chat                          `json:"chat"`
-	ForwardFrom                   *User                          `json:"forward_from"`
+	ForwardFrom                   *user.User                     `json:"forward_from"`
 	ForwardFromChat               *Chat                          `json:"forward_from_chat"`
 	ForwardFromMessageId          *int64                         `json:"forward_from_message_id"`
 	ForwardSignature              *string                        `json:"forward_signature"`
@@ -14,7 +20,7 @@ type Message struct {
 	ForwardDate                   *int64                         `json:"forward_date"`
 	IsAutomaticForward            *bool                          `json:"is_automatic_forward"`
 	ReplyToMessage                *Message                       `json:"reply_to_message"`
-	ViaBot                        *User                          `json:"via_bot"`
+	ViaBot                        *user.User                     `json:"via_bot"`
 	EditDate                      *int64                         `json:"edit_date"`
 	HasProtectedContent           *bool                          `json:"has_protected_content"`
 	MediaGroupId                  *string                        `json:"media_group_id"`
@@ -37,8 +43,8 @@ type Message struct {
 	Poll                          *Poll                          `json:"poll"`
 	Venue                         *Venue                         `json:"venue"`
 	Location                      *Location                      `json:"location"`
-	NewChatMembers                []User                         `json:"new_chat_members"`
-	LeftChatMember                *User                          `json:"left_chat_member"`
+	NewChatMembers                []user.User                    `json:"new_chat_members"`
+	LeftChatMember                *user.User                     `json:"left_chat_member"`
 	NewChatTitle                  *string                        `json:"new_chat_title"`
 	NewChatPhoto                  []PhotoSize                    `json:"new_chat_photo"`
 	DeleteChatPhoto               *bool                          `json:"delete_chat_photo"`
@@ -49,10 +55,10 @@ type Message struct {
 	MigrateToChatId               *int64                         `json:"migrate_to_chat_id"`
 	MigrateFromChatId             *int64                         `json:"migrate_from_chat_id"`
 	PinnedMessage                 *Message                       `json:"pinned_message"`
-	Invoice                       *Invoice                       `json:"invoice"`
-	SuccessfulPayment             *SuccessfulPayment             `json:"successful_payment"`
+	Invoice                       *payment.Invoice               `json:"invoice"`
+	SuccessfulPayment             *payment.SuccessfulPayment     `json:"successful_payment"`
 	ConnectedWebsite              *string                        `json:"connected_website"`
-	PassportData                  *PassportData                  `json:"passport_data"`
+	PassportData                  *passport.PassportData         `json:"passport_data"`
 	ProximityAlertTriggered       *ProximityAlertTriggered       `json:"proximity_alert_triggered"`
 	VideoChatScheduled            *VideoChatScheduled            `json:"video_chat_scheduled"`
 	VideoChatStarted              *VideoChatStarted              `json:"video_chat_started"`

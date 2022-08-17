@@ -1,4 +1,4 @@
-package telegram
+package payment
 
 type ShippingAddress struct {
 	CountryCode string `json:"country_code"`

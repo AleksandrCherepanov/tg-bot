@@ -1,4 +1,4 @@
-package telegram
+package passport
 
 type PassportFile struct {
 	FileId       string `json:"file_id"`

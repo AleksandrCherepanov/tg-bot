@@ -1,5 +1,7 @@
 package telegram
 
+import "strings"
+
 type Chat struct {
 	Id                                 int64            `json:"id"`
 	Type                               string           `json:"type"`
@@ -24,4 +26,25 @@ type Chat struct {
 	CanSetStickerSet                   *bool            `json:"can_set_sticker_set"`
 	LinkedChatId                       *int64           `json:"linked_chat_id"`
 	Location                           *ChatLocation    `json:"location"`
+}
+
+func (c *Chat) GetName() string {
+	nameParts := make([]string, 0, 0)
+	if c.FirstName != nil {
+		nameParts = append(nameParts, *c.FirstName)
+	}
+
+	if c.LastName != nil {
+		nameParts = append(nameParts, *c.LastName)
+	}
+	
+	if len(nameParts) == 0 && c.Username != nil {
+		nameParts = append(nameParts, *c.Username)
+	}
+
+	if len(nameParts) == 0 {
+		nameParts = append(nameParts, "anonymous user")
+	}
+	
+	return strings.Join(nameParts, " ")
 }

@@ -1,4 +1,4 @@
-package telegram
+package payment
 
 type SuccessfulPayment struct {
 	Currency                string     `json:"currency"`

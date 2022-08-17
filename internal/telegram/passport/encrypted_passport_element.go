@@ -1,4 +1,4 @@
-package telegram
+package passport
 
 type EncryptedPassportElement struct {
 	Type        string         `json:"type"`

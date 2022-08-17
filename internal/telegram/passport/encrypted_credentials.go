@@ -1,4 +1,4 @@
-package telegram
+package passport
 
 type EncryptedCredentials struct {
 	Data   string `json:"data"`
