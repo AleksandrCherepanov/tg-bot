@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"tg-bot/internal/task"
 	"tg-bot/internal/telegram"
+
+	"github.com/gorilla/mux"
 )
 
 func greetings(w http.ResponseWriter, req *http.Request) {
@@ -68,9 +70,15 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 
 func main() {
 	server := task.NewTaskServer()
-	mux := http.NewServeMux()
-	//mux.HandleFunc("/tasks", greetings)
-	mux.HandleFunc("/task/", server.Handler)
+	router := mux.NewRouter()
 
-	log.Fatal(http.ListenAndServe(":3000", mux))
+	router.HandleFunc("/task/", server.CreateTaskHandler).Methods("POST")
+	router.HandleFunc("/task/", server.GetAllTasksHandler).Methods("GET")
+	router.HandleFunc("/task/", server.DeleteAllTasksHandler).Methods("DELETE")
+	router.HandleFunc("/task/{id:[0-9]+}/", server.GetTaskHandler).Methods("GET")
+	router.HandleFunc("/task/{id:[0-9]+}/", server.DeleteTaskHandler).Methods("DELETE")
+
+	//mux.HandleFunc("/tasks", greetings)
+
+	log.Fatal(http.ListenAndServe(":3000", router))
 }
