@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tg-bot/internal/task"
 	"tg-bot/internal/telegram"
 )
 
@@ -66,8 +67,10 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
+	server := task.NewTaskServer()
 	mux := http.NewServeMux()
-	mux.HandleFunc("/tasks", greetings)
+	//mux.HandleFunc("/tasks", greetings)
+	mux.HandleFunc("/task/", server.Handler)
 
 	log.Fatal(http.ListenAndServe(":3000", mux))
 }
