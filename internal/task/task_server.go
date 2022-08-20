@@ -2,7 +2,6 @@ package task
 
 import (
 	"encoding/json"
-	"log"
 	"mime"
 	"net/http"
 	"strconv"
@@ -20,8 +19,6 @@ func NewTaskServer() *taskServer {
 }
 
 func (ts *taskServer) CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Command: create_task. Path: %s\n", req.URL.Path)
-
 	type RequestTask struct {
 		Text string `json:"text"`
 	}
@@ -57,15 +54,11 @@ func (ts *taskServer) CreateTaskHandler(w http.ResponseWriter, req *http.Request
 }
 
 func (ts *taskServer) GetAllTasksHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Command: get_all_task. Path: %s\n", req.URL.Path)
-
 	tasks := ts.storage.GetAllTasks()
 	renderJson(w, tasks)
 }
 
 func (ts *taskServer) GetTaskHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Command: get_task. Path: %s\n", req.URL.Path)
-	
 	id, err := strconv.ParseInt(mux.Vars(req)["id"], 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -81,12 +74,10 @@ func (ts *taskServer) GetTaskHandler(w http.ResponseWriter, req *http.Request) {
 }
 
 func (ts *taskServer) DeleteAllTasksHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Command: delete_all_task. Path: %s\n", req.URL.Path)
 	ts.storage.DeleteAllTasks()
 }
 
 func (ts *taskServer) DeleteTaskHandler(w http.ResponseWriter, req *http.Request) {
-	log.Printf("Command: delete_task. Path: %s\n", req.URL.Path)
 	id, err := strconv.ParseInt(mux.Vars(req)["id"], 10, 64)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

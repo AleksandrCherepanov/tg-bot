@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"tg-bot/internal/middleware"
 	"tg-bot/internal/task"
 	"tg-bot/internal/telegram"
 
@@ -79,6 +80,7 @@ func main() {
 	router.HandleFunc("/task/{id:[0-9]+}/", server.DeleteTaskHandler).Methods("DELETE")
 
 	//mux.HandleFunc("/tasks", greetings)
-
-	log.Fatal(http.ListenAndServe(":3000", router))
+	loggedRouter := middleware.Logging(router)
+	panicRecoveryRouter := middleware.PanicRecovery(loggedRouter)
+	log.Fatal(http.ListenAndServe(":3000", panicRecoveryRouter))
 }
