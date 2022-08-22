@@ -6,14 +6,16 @@ import (
 )
 
 type Task struct {
-	Id   int64
-	Text string
+	Id     int64
+	Text   string
+	IsDone bool
 }
 
-func New(id int64, text string) Task {
+func New(id int64, text string, isDone bool) Task {
 	return Task{
-		Id:   id,
-		Text: text,
+		Id:     id,
+		Text:   text,
+		IsDone: isDone,
 	}
 }
 
@@ -30,11 +32,11 @@ func NewStorage() *TaskStorage {
 	return ts
 }
 
-func (taskStorage *TaskStorage) CreateTask(text string) int64 {
+func (taskStorage *TaskStorage) CreateTask(text string, isDone bool) int64 {
 	taskStorage.Mutex.Lock()
 	defer taskStorage.Mutex.Unlock()
 
-	task := New(taskStorage.nextId, text)
+	task := New(taskStorage.nextId, text, isDone)
 	taskStorage.taskList[taskStorage.nextId] = task
 	taskStorage.nextId++
 	return task.Id
@@ -79,4 +81,40 @@ func (taskStorage *TaskStorage) DeleteAllTasks() {
 
 	taskList := make(map[int64]Task)
 	taskStorage.taskList = taskList
+}
+
+func (taskStorage *TaskStorage) Done(id int64) error {
+	task, err := taskStorage.GetTask(id)
+	if err != nil {
+		return err
+	}
+
+	task.IsDone = true
+	taskStorage.taskList[id] = task
+	return nil
+}
+
+func (taskStorage *TaskStorage) DoneAll() {
+	for i, t := range taskStorage.taskList {
+		t.IsDone = true
+		taskStorage.taskList[i] = t
+	}
+}
+
+func (taskStorage *TaskStorage) Undone(id int64) error {
+	task, err := taskStorage.GetTask(id)
+	if err != nil {
+		return err
+	}
+
+	task.IsDone = false
+	taskStorage.taskList[id] = task
+	return nil
+}
+
+func (taskStorage *TaskStorage) UndoneAll() {
+	for i, t := range taskStorage.taskList {
+		t.IsDone = false
+		taskStorage.taskList[i] = t
+	}
 }

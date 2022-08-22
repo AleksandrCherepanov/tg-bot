@@ -5,15 +5,15 @@ import (
 )
 
 func TestCreateGetTask(t *testing.T) {
-	tasks := []string{
-		"test1",
-		"test2",
-		"test3",
+	tasks := map[string]bool{
+		"test1": true,
+		"test2": false,
+		"test3": true,
 	}
 
 	taskStorage := NewStorage()
-	for _, t := range tasks {
-		taskStorage.CreateTask(t)
+	for text, done := range tasks {
+		taskStorage.CreateTask(text, done)
 	}
 
 	for i := len(tasks) - 1; i > 0; i-- {
@@ -22,8 +22,12 @@ func TestCreateGetTask(t *testing.T) {
 			t.Fatalf("Task create error. %s", err.Error())
 		}
 
-		if task.Text != tasks[i-1] {
-			t.Fatalf("Task create error. Expected: %v. Actual: %v", tasks[i-1], task.Text)
+		if _, ok := tasks[task.Text]; !ok {
+			t.Fatalf("Task create error. Actual: %v", task.Text)
+		}
+
+		if tasks[task.Text] != task.IsDone {
+			t.Fatalf("Task create error. Expected: %v. Actual: %v", tasks[task.Text], task.IsDone)
 		}
 	}
 
@@ -42,7 +46,7 @@ func TestDeleteTask(t *testing.T) {
 
 	taskStorage := NewStorage()
 	for _, t := range tasks {
-		taskStorage.CreateTask(t)
+		taskStorage.CreateTask(t, false)
 	}
 
 	taskStorage.DeleteTask(1)
@@ -74,7 +78,7 @@ func TestDeleteAllTask(t *testing.T) {
 
 	taskStorage := NewStorage()
 	for _, t := range tasks {
-		taskStorage.CreateTask(t)
+		taskStorage.CreateTask(t, true)
 	}
 
 	taskStorage.DeleteAllTasks()
