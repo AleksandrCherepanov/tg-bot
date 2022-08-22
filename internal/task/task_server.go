@@ -49,7 +49,7 @@ func (ts *taskServer) CreateTaskHandler(w http.ResponseWriter, req *http.Request
 		return
 	}
 
-	id := ts.storage.CreateTask(requestTask.Text)
+	id := ts.storage.CreateTask(requestTask.Text, false)
 	renderJson(w, ResponseId{Id: id})
 }
 
