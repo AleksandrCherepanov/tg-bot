@@ -18,6 +18,9 @@ func NewTaskServer() *taskServer {
 	return &taskServer{storage: storage}
 }
 
+func Resolver(w http.ResponseWriter, req *http.Request) {
+}
+
 func (ts *taskServer) CreateTaskHandler(w http.ResponseWriter, req *http.Request) {
 	type RequestTask struct {
 		Text string `json:"text"`
