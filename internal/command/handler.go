@@ -17,6 +17,7 @@ func NewCommandHandler() *CommandHandler {
 	handler := &CommandHandler{}
 	handler.handlers = map[string]HandlerInterface{
 		"/start": NewCommandStart(),
+		"/help":  NewCommandHelp(),
 	}
 
 	return handler

@@ -2,7 +2,6 @@ package client
 
 import (
 	"bytes"
-	"log"
 	"net/http"
 	"strconv"
 )
@@ -21,7 +20,6 @@ func NewClient() *TelegramHttpClient {
 }
 
 func (thc *TelegramHttpClient) SendMessage(userId int64, text string) (*http.Response, error) {
-	log.Println(`{"chat_id": ` + strconv.FormatInt(userId, 10) + `, "text": ` + text + `"}`)
 	request, err := http.NewRequest(
 		"POST",
 		thc.host+"/bot/sendMessage",

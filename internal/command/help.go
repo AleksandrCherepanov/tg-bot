@@ -6,19 +6,19 @@ import (
 	"tg-bot/internal/telegram/client"
 )
 
-type CommandStart struct {
+type CommandHelp struct {
 }
 
-func NewCommandStart() *CommandStart {
-	return &CommandStart{}
+func NewCommandHelp() *CommandHelp {
+	return &CommandHelp{}
 }
 
-func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, error) {
+func (commandHelp *CommandHelp) Handle(update *telegram.Update) (interface{}, error) {
 	chatId, err := update.Message.GetChatId()
 	if err != nil {
 		return nil, err
 	}
-	res, err := client.NewClient().SendMessage(chatId, "START COMMAND IS CALLED")
+	res, err := client.NewClient().SendMessage(chatId, "HELP COMMAND IS CALLED")
 	if err != nil {
 		return nil, err
 	}
