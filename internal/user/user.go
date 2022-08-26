@@ -229,3 +229,8 @@ func (userStorage *UserStorage) UndoneUserTaskAll(userId int64) error {
 	currentList.TaskStorage.UndoneAll()
 	return nil
 }
+
+func (userStorage *UserStorage) Exists(userId int64) bool {
+	_, ok := userStorage.userList[userId]
+	return ok
+}

@@ -9,7 +9,7 @@ import (
 	"net/http"
 	"strconv"
 	"tg-bot/internal/middleware"
-	"tg-bot/internal/task"
+	"tg-bot/internal/server"
 	"tg-bot/internal/telegram"
 
 	"github.com/gorilla/mux"
@@ -19,15 +19,6 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 	body, err := io.ReadAll(req.Body)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	fmt.Println("REQUEST:")
-	fmt.Println(string(body))
-	fmt.Println()
-	if len(body) == 0 {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -70,16 +61,11 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	server := task.NewTaskServer()
+	server := server.NewRouter()
 	router := mux.NewRouter()
 
-	router.HandleFunc("/task/", server.CreateTaskHandler).Methods("POST")
-	router.HandleFunc("/task/", server.GetAllTasksHandler).Methods("GET")
-	router.HandleFunc("/task/", server.DeleteAllTasksHandler).Methods("DELETE")
-	router.HandleFunc("/task/{id:[0-9]+}/", server.GetTaskHandler).Methods("GET")
-	router.HandleFunc("/task/{id:[0-9]+}/", server.DeleteTaskHandler).Methods("DELETE")
+	router.HandleFunc("/tasks", server.Resolve).Methods("POST", "GET")
 
-	//mux.HandleFunc("/tasks", greetings)
 	loggedRouter := middleware.Logging(router)
 	panicRecoveryRouter := middleware.PanicRecovery(loggedRouter)
 	log.Fatal(http.ListenAndServe(":3000", panicRecoveryRouter))
