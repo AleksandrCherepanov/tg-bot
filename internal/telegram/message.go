@@ -1,6 +1,7 @@
 package telegram
 
 import (
+	"fmt"
 	"tg-bot/internal/telegram/passport"
 	"tg-bot/internal/telegram/payment"
 	"tg-bot/internal/telegram/user"
@@ -66,4 +67,12 @@ type Message struct {
 	VideoChatParticipantsInvited  *VideoChatParticipantsInvited  `json:"video_chat_participants_invited"`
 	WebAppData                    *WebAppData                    `json:"web_app_data"`
 	ReplyMarkup                   *InlineKeyboardMarkup          `json:"reply_markup"`
+}
+
+func (m *Message) GetChatId() (int64, error) {
+	if m.Chat == nil {
+		return -1, fmt.Errorf("Chat is not defined")
+	}
+
+	return m.Chat.Id, nil
 }

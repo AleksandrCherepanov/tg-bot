@@ -22,15 +22,6 @@ func greetings(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	fmt.Println("REQUEST:")
-	fmt.Println(string(body))
-	fmt.Println()
-	if len(body) == 0 {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-
 	update := &telegram.Update{}
 	json.Unmarshal(body, update)
 

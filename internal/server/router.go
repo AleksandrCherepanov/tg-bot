@@ -2,7 +2,6 @@ package server
 
 import (
 	"encoding/json"
-	"io"
 	"net/http"
 	"tg-bot/internal/command"
 	"tg-bot/internal/telegram"
@@ -22,27 +21,27 @@ func NewRouter() *Router {
 }
 
 func (router *Router) Resolve(w http.ResponseWriter, req *http.Request) {
-	body, err := io.ReadAll(req.Body)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+	body, ok := GetParsedBody(req)
+	if !ok {
+		ResponseError(w, "Can't get parsed body")
 		return
 	}
 
 	update := &telegram.Update{}
-	err = json.Unmarshal(body, update)
+	err := json.Unmarshal(body, update)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		ResponseError(w, err.Error())
 		return
 	}
 
 	message := update.Message
 	if message == nil {
-		http.Error(w, "Can't process message", http.StatusInternalServerError)
+		ResponseError(w, "Can't process message")
 		return
 	}
 
 	if message.Entities == nil {
-		http.Error(w, "Can't process message", http.StatusInternalServerError)
+		ResponseError(w, "Can't process message")
 		return
 	}
 
@@ -55,7 +54,7 @@ func (router *Router) Resolve(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if handleError != nil {
-		http.Error(w, handleError.Error(), http.StatusInternalServerError)
+		ResponseError(w, handleError.Error())
 		return
 	}
 
