@@ -2,8 +2,10 @@ package command
 
 import (
 	"io"
-	"tg-bot/internal/telegram"
-	"tg-bot/internal/telegram/client"
+	"tg-bot/internal/template"
+	"tg-bot/pkg/config"
+	"tg-bot/pkg/telegram"
+	"tg-bot/pkg/telegram/client"
 )
 
 type CommandStart struct {
@@ -18,7 +20,19 @@ func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, 
 	if err != nil {
 		return nil, err
 	}
-	res, err := client.NewClient().SendMessage(chatId, "START COMMAND IS CALLED")
+
+	//TODO make config and client as a dependency
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	text, err := template.NewStartTemplate().GetText()
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.NewClient(cfg).SendMessage(chatId, text)
 	if err != nil {
 		return nil, err
 	}

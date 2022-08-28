@@ -2,8 +2,10 @@ package command
 
 import (
 	"io"
-	"tg-bot/internal/telegram"
-	"tg-bot/internal/telegram/client"
+	"tg-bot/internal/template"
+	"tg-bot/pkg/config"
+	"tg-bot/pkg/telegram"
+	"tg-bot/pkg/telegram/client"
 )
 
 type CommandHelp struct {
@@ -18,7 +20,18 @@ func (commandHelp *CommandHelp) Handle(update *telegram.Update) (interface{}, er
 	if err != nil {
 		return nil, err
 	}
-	res, err := client.NewClient().SendMessage(chatId, "HELP COMMAND IS CALLED")
+
+	cfg, err := config.GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	text, err := template.NewHelpTemplate().GetText()
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := client.NewClient(cfg).SendMessage(chatId, text)
 	if err != nil {
 		return nil, err
 	}

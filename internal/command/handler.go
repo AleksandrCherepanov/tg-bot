@@ -2,7 +2,7 @@ package command
 
 import (
 	"fmt"
-	"tg-bot/internal/telegram"
+	"tg-bot/pkg/telegram"
 )
 
 type HandlerInterface interface {

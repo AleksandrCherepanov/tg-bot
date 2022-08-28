@@ -1,6 +1,6 @@
 package telegram
 
-import "tg-bot/internal/telegram/payment"
+import "tg-bot/pkg/telegram/payment"
 
 type Update struct {
 	UpdateId           int64                     `json:"update_id"`
