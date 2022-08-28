@@ -8,26 +8,25 @@ import (
 	"tg-bot/pkg/telegram/client"
 )
 
-type CommandStart struct {
+type CommandHelp struct {
 }
 
-func NewCommandStart() *CommandStart {
-	return &CommandStart{}
+func NewCommandHelp() *CommandHelp {
+	return &CommandHelp{}
 }
 
-func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, error) {
+func (commandHelp *CommandHelp) Handle(update *telegram.Update) (interface{}, error) {
 	chatId, err := update.Message.GetChatId()
 	if err != nil {
 		return nil, err
 	}
 
-	//TODO make config and client as a dependency
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	text, err := template.NewStartTemplate().GetText()
+	text, err := template.NewHelpTemplate().GetText()
 	if err != nil {
 		return nil, err
 	}

@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"tg-bot/internal/command"
-	"tg-bot/internal/telegram"
+	"tg-bot/pkg/telegram"
 )
 
 type Router struct {

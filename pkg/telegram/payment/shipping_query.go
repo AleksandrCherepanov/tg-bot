@@ -1,6 +1,6 @@
 package payment
 
-import "tg-bot/internal/telegram/user"
+import "tg-bot/pkg/telegram/user"
 
 type ShippingQuery struct {
 	Id              string          `json:"id"`

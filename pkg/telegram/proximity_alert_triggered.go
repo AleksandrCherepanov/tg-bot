@@ -1,6 +1,6 @@
 package telegram
 
-import "tg-bot/internal/telegram/user"
+import "tg-bot/pkg/telegram/user"
 
 type ProximityAlertTriggered struct {
 	Traveler user.User `json:"traveler"`
