@@ -8,14 +8,14 @@ import (
 	"tg-bot/pkg/telegram/client"
 )
 
-type CommandStart struct {
+type CommandUnknown struct {
 }
 
-func NewCommandStart() *CommandStart {
-	return &CommandStart{}
+func NewCommandUnknown() *CommandUnknown {
+	return &CommandUnknown{}
 }
 
-func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, error) {
+func (commandUnknown *CommandUnknown) Handle(update *telegram.Update) (interface{}, error) {
 	chatId, err := update.Message.GetChatId()
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, 
 		return nil, err
 	}
 
-	text, err := template.NewStartTemplate().GetText()
+	text, err := template.NewUnknownTemplate(*update.Message.Text).GetText()
 	if err != nil {
 		return nil, err
 	}
