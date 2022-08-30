@@ -1,24 +1,32 @@
 package command
 
 import (
+	"fmt"
+	"strings"
 	"tg-bot/pkg/telegram"
 )
 
 const unknownCommand = "/unknown"
 
-type HandlerInterface interface {
-	Handle(update *telegram.Update) (interface{}, error)
+type CommandHandlerInterface interface {
+	Handle(update *telegram.Update, command string, args []string) (interface{}, error)
 }
 
 type CommandHandler struct {
-	handlers map[string]HandlerInterface
+	handlers map[string]CommandHandlerInterface
 }
 
 func NewCommandHandler() *CommandHandler {
 	handler := &CommandHandler{}
-	handler.handlers = map[string]HandlerInterface{
+	handler.handlers = map[string]CommandHandlerInterface{
 		"/start":       NewCommandStart(),
 		"/help":        NewCommandHelp(),
+		"/l":           NewCommandList(),
+		"/lc":          NewCommandList(),
+		"/ls":          NewCommandList(),
+		"/lg":          NewCommandList(),
+		"/ld":          NewCommandList(),
+		"/lda":         NewCommandList(),
 		unknownCommand: NewCommandUnknown(),
 	}
 
@@ -26,13 +34,17 @@ func NewCommandHandler() *CommandHandler {
 }
 
 func (commandHandler *CommandHandler) Handle(update *telegram.Update) (interface{}, error) {
-	command := *update.Message.Text
+	commandWithArgs := strings.Split(*update.Message.Text, " ")
 
-	handler, ok := commandHandler.handlers[command]
-	if !ok {
-		unknownHandler, _ := commandHandler.handlers[unknownCommand]
-		return unknownHandler.Handle(update)
+	if len(commandWithArgs) == 0 {
+		return nil, fmt.Errorf("Invalid command")
 	}
 
-	return handler.Handle(update)
+	handler, ok := commandHandler.handlers[commandWithArgs[0]]
+	if !ok {
+		unknownHandler, _ := commandHandler.handlers[unknownCommand]
+		return unknownHandler.Handle(update, unknownCommand, []string{})
+	}
+
+	return handler.Handle(update, commandWithArgs[0], commandWithArgs[1:])
 }

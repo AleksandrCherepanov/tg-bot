@@ -8,12 +8,16 @@ import (
 )
 
 type Router struct {
-	handlers map[string]command.HandlerInterface
+	handlers map[string]HandlerInterface
+}
+
+type HandlerInterface interface {
+	Handle(update *telegram.Update) (interface{}, error)
 }
 
 func NewRouter() *Router {
 	router := &Router{}
-	router.handlers = map[string]command.HandlerInterface{
+	router.handlers = map[string]HandlerInterface{
 		"command": command.NewCommandHandler(),
 	}
 

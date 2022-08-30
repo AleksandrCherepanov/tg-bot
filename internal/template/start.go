@@ -13,7 +13,7 @@ func NewStartTemplate() *StartTemplate {
 	t := &StartTemplate{}
 	t.Steps = map[string]string{
 		"/lc": "create your first list of tasks",
-		"/ls": "make create list as a current one",
+		"/ls": "make created list as a current one",
 		"/tc": "create your first task",
 	}
 	return t
@@ -22,7 +22,7 @@ func NewStartTemplate() *StartTemplate {
 func (st *StartTemplate) GetText() (string, error) {
 	tmpl := template.New("start")
 	text := ` 
-Welocome\!
+Welcome\!
 This bot allows you to manage your tasks\. 
 There are several steps to start:
 {{range $step, $description := .Steps}}{{$step}} \- {{$description}}

@@ -32,6 +32,7 @@ func (taskListStorage *TaskListStorage) CreateList(name string) int64 {
 
 	list := TaskList{}
 	list.Id = taskListStorage.nextId
+	list.Name = name
 	list.TaskStorage = task.NewStorage()
 	taskListStorage.lists[list.Id] = list
 	taskListStorage.nextId++
