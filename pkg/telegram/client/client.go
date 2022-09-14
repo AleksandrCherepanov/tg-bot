@@ -23,8 +23,23 @@ func NewClient(cfg *config.Config) *TelegramHttpClient {
 	return telegramHttpClient
 }
 
+type messageRequest struct {
+	ChatId    int64  `json:"chat_id"`
+	Text      string `json:"text"`
+	ParseMode string `json:"parse_mode"`
+}
+
+func newMessageRequest(chatId int64, text string) *messageRequest {
+	mr := &messageRequest{}
+	mr.ChatId = chatId
+	mr.Text = text
+	mr.ParseMode = "MarkdownV2"
+
+	return mr
+}
+
 func (thc *TelegramHttpClient) SendMessage(userId int64, text string) (*http.Response, error) {
-	message := NewMessageRequest(userId, text)
+	message := newMessageRequest(userId, text)
 
 	jsonMessage, err := json.Marshal(message)
 	if err != nil {

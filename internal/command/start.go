@@ -7,22 +7,19 @@ import (
 )
 
 type CommandStart struct {
+	chatId  int64
+	message *telegram.Message
 }
 
-func NewCommandStart() *CommandStart {
-	return &CommandStart{}
+func NewCommandStart(chatId int64, message *telegram.Message) *CommandStart {
+	return &CommandStart{chatId, message}
 }
 
-func (commandStart *CommandStart) Handle(update *telegram.Update, command string, args []string) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
-	if err != nil {
-		return nil, err
-	}
-
+func (c *CommandStart) Handle(command string, args []string) (interface{}, error) {
 	text, err := template.NewStartTemplate().GetText()
 	if err != nil {
 		return nil, err
 	}
 
-	return client.TelegramResponse(chatId, text)
+	return client.NewTelegramResponse(c.chatId, text, false), nil
 }

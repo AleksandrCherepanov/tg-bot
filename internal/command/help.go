@@ -7,22 +7,19 @@ import (
 )
 
 type CommandHelp struct {
+	chatId  int64
+	message *telegram.Message
 }
 
-func NewCommandHelp() *CommandHelp {
-	return &CommandHelp{}
+func NewCommandHelp(chatId int64, message *telegram.Message) *CommandHelp {
+	return &CommandHelp{chatId, message}
 }
 
-func (commandHelp *CommandHelp) Handle(update *telegram.Update, command string, args []string) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
-	if err != nil {
-		return nil, err
-	}
-
+func (c *CommandHelp) Handle(command string, args []string) (interface{}, error) {
 	text, err := template.NewHelpTemplate().GetText()
 	if err != nil {
 		return nil, err
 	}
 
-	return client.TelegramResponse(chatId, text)
+	return client.NewTelegramResponse(c.chatId, text, false), nil
 }

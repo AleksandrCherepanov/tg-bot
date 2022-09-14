@@ -1,23 +1,35 @@
 package client
 
 import (
-	"fmt"
 	"io"
 	"tg-bot/pkg/config"
 )
 
-func TelegramResponse(chatId int64, data interface{}) (interface{}, error) {
+type TelegramResponse struct {
+	ChatId  int64
+	Text    string
+	IsError bool
+}
+
+func NewTelegramResponse(chatId int64, text string, isError bool) TelegramResponse {
+	return TelegramResponse{chatId, text, isError}
+}
+
+func (tr TelegramResponse) Error() string {
+	if tr.IsError {
+		return tr.Text
+	}
+
+	return ""
+}
+
+func (tr *TelegramResponse) Send() (interface{}, error) {
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	text, ok := data.(string)
-	if !ok {
-		return nil, fmt.Errorf("Can't parse telegram data")
-	}
-
-	res, err := NewClient(cfg).SendMessage(chatId, text)
+	res, err := NewClient(cfg).SendMessage(tr.ChatId, tr.Text)
 	if err != nil {
 		return nil, err
 	}

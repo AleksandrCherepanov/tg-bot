@@ -9,110 +9,109 @@ import (
 )
 
 type CommandList struct {
+	chatId      int64
+	message     *telegram.Message
 	userStorage *user.UserStorage
 }
 
-func NewCommandList() *CommandList {
+func NewCommandList(chatId int64, message *telegram.Message) *CommandList {
 	return &CommandList{
+		chatId:      chatId,
+		message:     message,
 		userStorage: user.GetUserStorage(),
 	}
 }
 
-func (commandList *CommandList) Handle(
-	update *telegram.Update,
-	command string,
-	args []string,
-) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
-	if err != nil {
-		return nil, err
-	}
-
+func (c *CommandList) Handle(command string, args []string) (interface{}, error) {
 	switch command {
 	case "/l":
 		{
-			return commandList.getUserLists(chatId, update.Message.Chat.GetName())
+			return c.getUserLists(c.chatId, c.message.Chat.GetName())
 		}
 	case "/lc":
 		{
 			if len(args) != 1 {
-				return client.TelegramResponse(chatId, `Invalid command arguments\.`)
+				return client.NewTelegramResponse(c.chatId, `Invalid command arguments\.`, true), nil
 			}
-			return commandList.createUserList(chatId, update.Message.Chat.GetName(), args[0])
+			return c.createUserList(c.chatId, c.message.Chat.GetName(), args[0])
 		}
 	case "/ld":
 		{
 			if len(args) != 1 {
-				return client.TelegramResponse(chatId, `Invalid command arguments\.`)
+				return client.NewTelegramResponse(c.chatId, `Invalid command arguments\.`, true), nil
 			}
 			listId, err := strconv.ParseInt(args[0], 10, 64)
 			if err != nil {
-				return client.TelegramResponse(chatId, `Invalid command arguments\.`)
+				return client.NewTelegramResponse(c.chatId, `Invalid command arguments\.`, true), nil
 			}
-			return commandList.deleteUserList(chatId, update.Message.Chat.GetName(), listId)
+			return c.deleteUserList(c.chatId, c.message.Chat.GetName(), listId)
 		}
 	case "/lda":
 		{
-			return commandList.deleteAllUserLists(chatId, update.Message.Chat.GetName())
+			return c.deleteAllUserLists(c.chatId, c.message.Chat.GetName())
 		}
 	}
 
-	return client.TelegramResponse(chatId, `Can't parse command\.`)
+	return client.NewTelegramResponse(c.chatId, `Can't parse command\.`, true), nil
 }
 
-func (commandList *CommandList) getUserLists(userId int64, name string) (interface{}, error) {
-	user, notFound := commandList.userStorage.GetUserById(userId)
+func (c *CommandList) getUserLists(userId int64, name string) (interface{}, error) {
+	user, notFound := c.userStorage.GetUserById(userId)
 	if notFound != nil {
-		user = commandList.userStorage.CreateUser(userId, name)
+		user = c.userStorage.CreateUser(userId, name)
 	}
 
-	lists, err := commandList.userStorage.GetListAllByUser(user.Id)
+	lists, err := c.userStorage.GetListAllByUser(user.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	text, err := template.NewAllListTemplate(lists).GetText()
-	return client.TelegramResponse(userId, text)
-}
-
-func (commandList *CommandList) createUserList(userId int64, userName string, listName string) (interface{}, error) {
-	user, notFound := commandList.userStorage.GetUserById(userId)
-	if notFound != nil {
-		user = commandList.userStorage.CreateUser(userId, userName)
-	}
-
-	_, err := commandList.userStorage.CreateUserList(user.Id, listName)
 	if err != nil {
 		return nil, err
 	}
 
-	return commandList.getUserLists(user.Id, user.Name)
+	return client.NewTelegramResponse(userId, text, true), nil
 }
 
-func (commandList *CommandList) deleteUserList(userId int64, userName string, listId int64) (interface{}, error) {
-	user, notFound := commandList.userStorage.GetUserById(userId)
+func (c *CommandList) createUserList(userId int64, userName string, listName string) (interface{}, error) {
+	user, notFound := c.userStorage.GetUserById(userId)
 	if notFound != nil {
-		user = commandList.userStorage.CreateUser(userId, userName)
+		user = c.userStorage.CreateUser(userId, userName)
 	}
 
-	err := commandList.userStorage.DeleteUserListById(user.Id, listId)
+	_, err := c.userStorage.CreateUserList(user.Id, listName)
 	if err != nil {
 		return nil, err
 	}
 
-	return commandList.getUserLists(user.Id, user.Name)
+	return c.getUserLists(user.Id, user.Name)
 }
 
-func (commandList *CommandList) deleteAllUserLists(userId int64, userName string) (interface{}, error) {
-	user, notFound := commandList.userStorage.GetUserById(userId)
+func (c *CommandList) deleteUserList(userId int64, userName string, listId int64) (interface{}, error) {
+	user, notFound := c.userStorage.GetUserById(userId)
 	if notFound != nil {
-		user = commandList.userStorage.CreateUser(userId, userName)
+		user = c.userStorage.CreateUser(userId, userName)
 	}
 
-	err := commandList.userStorage.DeleteAllUserLists(user.Id)
+	err := c.userStorage.DeleteUserListById(user.Id, listId)
 	if err != nil {
 		return nil, err
 	}
 
-	return commandList.getUserLists(user.Id, user.Name)
+	return c.getUserLists(user.Id, user.Name)
+}
+
+func (c *CommandList) deleteAllUserLists(userId int64, userName string) (interface{}, error) {
+	user, notFound := c.userStorage.GetUserById(userId)
+	if notFound != nil {
+		user = c.userStorage.CreateUser(userId, userName)
+	}
+
+	err := c.userStorage.DeleteAllUserLists(user.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	return c.getUserLists(user.Id, user.Name)
 }

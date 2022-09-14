@@ -10,6 +10,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// TODO fix without space list name
+// TODO create user only for start command
+// TODO make commands like `command`
 // TODO return unknown commands to telegram as an answer
 // TODO make config and client as a dependency of commands
 // TODO get services as singletones

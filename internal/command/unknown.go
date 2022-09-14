@@ -7,22 +7,19 @@ import (
 )
 
 type CommandUnknown struct {
+	chatId  int64
+	message *telegram.Message
 }
 
-func NewCommandUnknown() *CommandUnknown {
-	return &CommandUnknown{}
+func NewCommandUnknown(chatId int64, message *telegram.Message) *CommandUnknown {
+	return &CommandUnknown{chatId, message}
 }
 
-func (commandUnknown *CommandUnknown) Handle(update *telegram.Update, command string, args []string) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
+func (c *CommandUnknown) Handle(command string, args []string) (interface{}, error) {
+	text, err := template.NewUnknownTemplate(*c.message.Text).GetText()
 	if err != nil {
 		return nil, err
 	}
 
-	text, err := template.NewUnknownTemplate(*update.Message.Text).GetText()
-	if err != nil {
-		return nil, err
-	}
-
-	return client.TelegramResponse(chatId, text)
+	return client.NewTelegramResponse(c.chatId, text, true), nil
 }
