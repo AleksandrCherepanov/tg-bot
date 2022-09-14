@@ -1,44 +1,25 @@
 package command
 
 import (
-	"io"
 	"tg-bot/internal/template"
-	"tg-bot/pkg/config"
 	"tg-bot/pkg/telegram"
 	"tg-bot/pkg/telegram/client"
 )
 
 type CommandStart struct {
+	chatId  int64
+	message *telegram.Message
 }
 
-func NewCommandStart() *CommandStart {
-	return &CommandStart{}
+func NewCommandStart(chatId int64, message *telegram.Message) *CommandStart {
+	return &CommandStart{chatId, message}
 }
 
-func (commandStart *CommandStart) Handle(update *telegram.Update) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
-	if err != nil {
-		return nil, err
-	}
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return nil, err
-	}
-
+func (c *CommandStart) Handle(command string, args []string) (interface{}, error) {
 	text, err := template.NewStartTemplate().GetText()
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := client.NewClient(cfg).SendMessage(chatId, text)
-	if err != nil {
-		return nil, err
-	}
-
-	responseBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	return responseBody, nil
+	return client.NewTelegramResponse(c.chatId, text, false), nil
 }

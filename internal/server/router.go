@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"tg-bot/internal/command"
 	"tg-bot/pkg/telegram"
+	"tg-bot/pkg/telegram/client"
 )
 
 type Router struct {
@@ -12,11 +13,13 @@ type Router struct {
 }
 
 func NewRouter() *Router {
-	router := &Router{}
-	router.handlers = map[string]command.HandlerInterface{
-		"command": command.NewCommandHandler(),
-	}
+	return &Router{}
+}
 
+func (router *Router) WithHandlers(chatId int64, message *telegram.Message) *Router {
+	router.handlers = map[string]command.HandlerInterface{
+		"command": command.NewCommandHandler(chatId, message),
+	}
 	return router
 }
 
@@ -45,18 +48,35 @@ func (router *Router) Resolve(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	chatId, err := update.Message.GetChatId()
+	if err != nil {
+		ResponseError(w, "Can't process message")
+	}
+
 	var result interface{}
 	var handleError error
 	for _, entity := range *&message.Entities {
 		if entity.IsCommand() {
-			result, handleError = router.handlers["command"].Handle(update)
+			router = router.WithHandlers(chatId, message)
+			result, handleError = router.handlers["command"].Handle(chatId, update.Message)
 		}
 	}
 
 	if handleError != nil {
+		tgResponse, ok := handleError.(client.TelegramResponse)
+		if ok {
+			result, err = tgResponse.Send()
+			if err != nil {
+				ResponseError(w, err.Error())
+				return
+			}
+		}
 		ResponseError(w, handleError.Error())
 		return
 	}
 
+	if tgResult, ok := result.(client.TelegramResponse); ok {
+		tgResult.Send()
+	}
 	ResponseJson(w, result)
 }

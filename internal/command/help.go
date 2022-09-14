@@ -1,44 +1,25 @@
 package command
 
 import (
-	"io"
 	"tg-bot/internal/template"
-	"tg-bot/pkg/config"
 	"tg-bot/pkg/telegram"
 	"tg-bot/pkg/telegram/client"
 )
 
 type CommandHelp struct {
+	chatId  int64
+	message *telegram.Message
 }
 
-func NewCommandHelp() *CommandHelp {
-	return &CommandHelp{}
+func NewCommandHelp(chatId int64, message *telegram.Message) *CommandHelp {
+	return &CommandHelp{chatId, message}
 }
 
-func (commandHelp *CommandHelp) Handle(update *telegram.Update) (interface{}, error) {
-	chatId, err := update.Message.GetChatId()
-	if err != nil {
-		return nil, err
-	}
-
-	cfg, err := config.GetConfig()
-	if err != nil {
-		return nil, err
-	}
-
+func (c *CommandHelp) Handle(command string, args []string) (interface{}, error) {
 	text, err := template.NewHelpTemplate().GetText()
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := client.NewClient(cfg).SendMessage(chatId, text)
-	if err != nil {
-		return nil, err
-	}
-
-	responseBody, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	return responseBody, nil
+	return client.NewTelegramResponse(c.chatId, text, false), nil
 }
