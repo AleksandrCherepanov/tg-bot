@@ -2,6 +2,7 @@ package command
 
 import (
 	"strconv"
+	"strings"
 	"tg-bot/internal/template"
 	"tg-bot/internal/user"
 	"tg-bot/pkg/telegram"
@@ -30,10 +31,10 @@ func (c *CommandList) Handle(command string, args []string) (interface{}, error)
 		}
 	case "/lc":
 		{
-			if len(args) != 1 {
+			if len(args) < 1 {
 				return client.NewTelegramResponse(c.chatId, `Invalid command arguments\.`, true), nil
 			}
-			return c.createUserList(c.chatId, c.message.Chat.GetName(), args[0])
+			return c.createUserList(c.chatId, c.message.Chat.GetName(), args)
 		}
 	case "/ld":
 		{
@@ -74,12 +75,13 @@ func (c *CommandList) getUserLists(userId int64, name string) (interface{}, erro
 	return client.NewTelegramResponse(userId, text, true), nil
 }
 
-func (c *CommandList) createUserList(userId int64, userName string, listName string) (interface{}, error) {
+func (c *CommandList) createUserList(userId int64, userName string, listNameParts []string) (interface{}, error) {
 	user, notFound := c.userStorage.GetUserById(userId)
 	if notFound != nil {
 		user = c.userStorage.CreateUser(userId, userName)
 	}
 
+	listName := strings.Join(listNameParts, " ")
 	_, err := c.userStorage.CreateUserList(user.Id, listName)
 	if err != nil {
 		return nil, err

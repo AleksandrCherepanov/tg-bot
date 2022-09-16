@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"tg-bot/pkg/config"
 )
@@ -46,7 +45,6 @@ func (thc *TelegramHttpClient) SendMessage(userId int64, text string) (*http.Res
 		return nil, err
 	}
 
-	fmt.Println(string(jsonMessage))
 	request, err := http.NewRequest(
 		"POST",
 		thc.host+"/bot"+thc.config.Token+"/sendMessage",

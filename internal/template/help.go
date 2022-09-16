@@ -6,28 +6,27 @@ import (
 )
 
 type HelpTemplate struct {
-	Commands map[string]string
+	Commands []string
 }
 
 func NewHelpTemplate() *HelpTemplate {
 	t := &HelpTemplate{}
-	t.Commands = map[string]string{
-		"/start":       "start to work",
-		"/help":        "help",
-		"/info":        "get current user summary",
-		"/l":           "get lists of user",
-		`/lc \{name\}`: `create list for user, where \{name\} is a name for you list`,
-		"/ls":          "set list as a current one",
-		"/lg":          "get list",
-		`/ld \{id\}`:   `delete list, where \{id\} is list id`,
-		"/lda":         "delete all lists",
-		"/t":           "get tasks of current list",
-		"/tg":          "get task of current list",
-		"/tc":          "create task for current list",
-		"/td":          "delete task for current list",
-		"/tda":         "delete all tasks for current list",
-		"/tm":          "mark task as done/undone for current list",
-		"/tma":         "mark all task as done/undone for current list",
+	t.Commands = []string{
+		"`/start` \\- start to work",
+		"`/help` \\- help",
+		"`/l` \\- get lists of user",
+		"`/lc name` \\- create list for user, where `name` is a name for you list",
+		"`/ls id` \\- set list as a current one, where `id` is identifier of your list",
+		"`/lg id` \\- get list, where `id` is identifier of your list",
+		"`/ld id` \\- delete list, where `id` is identifier of your list",
+		"`/lda` \\- delete all lists",
+		"`/t` \\- get tasks of current list",
+		"`/tg id` \\- get task of current list, where `id` is identifier of your task",
+		"`/tc name` \\- create task for current list, where `name` is a name of your task",
+		"`/td id` \\- delete task for current list, where `id` is identifier of your task",
+		"`/tda` \\- delete all tasks for current list",
+		"`/tm id` \\- mark task as done/undone for current list, where `id` is identifier of your task",
+		"`/tma` \\- mark all task as done/undone for current list",
 	}
 
 	return t
@@ -35,13 +34,12 @@ func NewHelpTemplate() *HelpTemplate {
 
 func (ht *HelpTemplate) GetText() (string, error) {
 	tmpl := template.New("help")
-	text := ` 
-*Remember* working with tasks is possible after setting some of your lists as a current one\.
 
-*Command list:*
-{{range $command, $description := .Commands}}{{$command}} \- {{$description}}
-{{end}}
-`
+	text := "*Remember* working with tasks is possible after setting some of your lists as a current one\\.\n\n"
+	text += "*Command list:*\n"
+	text += "{{range $i, $command := .Commands}}{{$command}}\n"
+	text += "{{end}}"
+
 	tmpl, err := tmpl.Parse(text)
 	if err != nil {
 		return "", err
