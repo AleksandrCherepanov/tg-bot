@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// TODO create user only for start command
+// TODO remove old pinned messages before pin a new one
 // TODO make config and client as a dependency of commands
 // TODO get services as singletones
 // TODO find out how to work with env file correctly
