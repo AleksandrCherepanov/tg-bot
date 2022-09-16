@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"tg-bot/internal/list"
-	"tg-bot/internal/task"
 )
 
 type User struct {
@@ -87,6 +86,7 @@ func (userStorage *UserStorage) SetCurrentList(userId int64, listId int64) (list
 	}
 
 	user.CurrentList = &userList
+	userStorage.userList[userId] = user
 	return userList, nil
 }
 
@@ -164,119 +164,4 @@ func (userStorage *UserStorage) DeleteAllUserLists(userId int64) error {
 
 	user.listStorage.DeleteListAll()
 	return nil
-}
-
-func (userStorage *UserStorage) CreateUserTask(userId int64, taskText string, isDone bool) (int64, error) {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return -1, err
-	}
-
-	return currentList.TaskStorage.CreateTask(taskText, isDone), nil
-}
-
-func (userStorage *UserStorage) GetUserTaskAll(userId int64) ([]task.Task, error) {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return make([]task.Task, 0), err
-	}
-
-	return currentList.TaskStorage.GetAllTasks(), nil
-}
-
-func (userStorage *UserStorage) GetUserTaskById(userId int64, taskId int64) (task.Task, error) {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return task.Task{}, err
-	}
-
-	userTask, err := currentList.TaskStorage.GetTask(taskId)
-	if err != nil {
-		return task.Task{}, err
-	}
-
-	return userTask, nil
-}
-
-func (userStorage *UserStorage) DeleteUserTaskAll(userId int64) error {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return err
-	}
-
-	currentList.TaskStorage.DeleteAllTasks()
-	return nil
-}
-
-func (userStorage *UserStorage) DeleteUserTaskByTaskId(userId int64, taskId int64) error {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return err
-	}
-
-	currentList.TaskStorage.DeleteTask(taskId)
-	return nil
-}
-
-func (userStorage *UserStorage) DoneUserTask(userId int64, taskId int64) error {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return err
-	}
-
-	err = currentList.TaskStorage.Done(taskId)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (userStorage *UserStorage) DoneUserTaskAll(userId int64) error {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return err
-	}
-
-	currentList.TaskStorage.DoneAll()
-	return nil
-}
-
-func (userStorage *UserStorage) UndoneUserTaskAll(userId int64) error {
-	userStorage.Mutex.Lock()
-	defer userStorage.Mutex.Unlock()
-
-	currentList, err := userStorage.getCurrentList(userId)
-	if err != nil {
-		return err
-	}
-
-	currentList.TaskStorage.UndoneAll()
-	return nil
-}
-
-func (userStorage *UserStorage) Exists(userId int64) bool {
-	_, ok := userStorage.userList[userId]
-	return ok
 }

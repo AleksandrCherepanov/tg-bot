@@ -24,13 +24,19 @@ func NewCommandHandler(chatId int64, message *telegram.Message) *CommandHandler 
 	commandHandler := &CommandHandler{}
 	commandHandler.handlers = map[string]CommandHandlerInterface{
 		"/start":       NewCommandStart(chatId, message),
-		"/help":        NewCommandHelp(chatId, message),
-		"/l":           NewCommandList(chatId, message),
-		"/lc":          NewCommandList(chatId, message),
-		"/ls":          NewCommandList(chatId, message),
-		"/lg":          NewCommandList(chatId, message),
-		"/ld":          NewCommandList(chatId, message),
-		"/lda":         NewCommandList(chatId, message),
+		"/help":        NewCommandHelp(chatId),
+		"/l":           NewCommandList(chatId),
+		"/lc":          NewCommandList(chatId),
+		"/ls":          NewCommandList(chatId),
+		"/lg":          NewCommandList(chatId),
+		"/ld":          NewCommandList(chatId),
+		"/lda":         NewCommandList(chatId),
+		"/t":           NewCommandTask(chatId),
+		"/tc":          NewCommandTask(chatId),
+		"/td":          NewCommandTask(chatId),
+		"/tda":         NewCommandTask(chatId),
+		"/tm":          NewCommandTask(chatId),
+		"/tma":         NewCommandTask(chatId),
 		unknownCommand: NewCommandUnknown(chatId, message),
 	}
 

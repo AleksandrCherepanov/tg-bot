@@ -6,20 +6,17 @@ import (
 	"strings"
 	"tg-bot/internal/template"
 	"tg-bot/internal/user"
-	"tg-bot/pkg/telegram"
 	"tg-bot/pkg/telegram/client"
 )
 
 type CommandList struct {
 	chatId      int64
-	message     *telegram.Message
 	userStorage *user.UserStorage
 }
 
-func NewCommandList(chatId int64, message *telegram.Message) *CommandList {
+func NewCommandList(chatId int64) *CommandList {
 	return &CommandList{
 		chatId:      chatId,
-		message:     message,
 		userStorage: user.GetUserStorage(),
 	}
 }
@@ -32,14 +29,14 @@ func (c *CommandList) Handle(command string, args []string) (interface{}, error)
 	switch command {
 	case "/l":
 		{
-			return c.getUserLists(c.chatId, c.message.Chat.GetName())
+			return c.getUserLists(c.chatId)
 		}
 	case "/lc":
 		{
 			if len(args) < 1 {
 				return nil, c.throwTelegramError(`Invalid command arguments\.`)
 			}
-			return c.createUserList(c.chatId, c.message.Chat.GetName(), args)
+			return c.createUserList(c.chatId, args)
 		}
 	case "/ld":
 		{
@@ -50,7 +47,7 @@ func (c *CommandList) Handle(command string, args []string) (interface{}, error)
 			if err != nil {
 				return nil, c.throwTelegramError(`Invalid command arguments\.`)
 			}
-			return c.deleteUserList(c.chatId, c.message.Chat.GetName(), listId)
+			return c.deleteUserList(c.chatId, listId)
 		}
 	case "/ls":
 		{
@@ -65,14 +62,14 @@ func (c *CommandList) Handle(command string, args []string) (interface{}, error)
 		}
 	case "/lda":
 		{
-			return c.deleteAllUserLists(c.chatId, c.message.Chat.GetName())
+			return c.deleteAllUserLists(c.chatId)
 		}
 	}
 
 	return nil, client.NewTelegramResponse(c.chatId, `Can't parse command\.`, true)
 }
 
-func (c *CommandList) getUserLists(userId int64, name string) (interface{}, error) {
+func (c *CommandList) getUserLists(userId int64) (interface{}, error) {
 	user, err := c.userStorage.GetUserById(userId)
 	if err != nil {
 		return nil, c.throwTelegramError("User not found. Use command `/start` to create an user")
@@ -91,7 +88,7 @@ func (c *CommandList) getUserLists(userId int64, name string) (interface{}, erro
 	return client.NewTelegramResponse(userId, text, true), nil
 }
 
-func (c *CommandList) createUserList(userId int64, userName string, listNameParts []string) (interface{}, error) {
+func (c *CommandList) createUserList(userId int64, listNameParts []string) (interface{}, error) {
 	user, err := c.userStorage.GetUserById(userId)
 	if err != nil {
 		return nil, c.throwTelegramError("User not found. Use command `/start` to create an user")
@@ -103,10 +100,10 @@ func (c *CommandList) createUserList(userId int64, userName string, listNamePart
 		return nil, c.throwTelegramError("Can't create user's list")
 	}
 
-	return c.getUserLists(user.Id, user.Name)
+	return c.getUserLists(user.Id)
 }
 
-func (c *CommandList) deleteUserList(userId int64, userName string, listId int64) (interface{}, error) {
+func (c *CommandList) deleteUserList(userId int64, listId int64) (interface{}, error) {
 	user, err := c.userStorage.GetUserById(userId)
 	if err != nil {
 		return nil, c.throwTelegramError("User nor found. Use command `/start` to create an user")
@@ -117,10 +114,10 @@ func (c *CommandList) deleteUserList(userId int64, userName string, listId int64
 		return nil, c.throwTelegramError("Can't delete user's list")
 	}
 
-	return c.getUserLists(user.Id, user.Name)
+	return c.getUserLists(user.Id)
 }
 
-func (c *CommandList) deleteAllUserLists(userId int64, userName string) (interface{}, error) {
+func (c *CommandList) deleteAllUserLists(userId int64) (interface{}, error) {
 	user, err := c.userStorage.GetUserById(userId)
 	if err != nil {
 		return nil, c.throwTelegramError("User not found. Use command `/start` to create an user")
@@ -131,7 +128,7 @@ func (c *CommandList) deleteAllUserLists(userId int64, userName string) (interfa
 		return nil, c.throwTelegramError("Can't delete user's lists")
 	}
 
-	return c.getUserLists(user.Id, user.Name)
+	return c.getUserLists(user.Id)
 }
 
 func (c *CommandList) setCurrentList(userId int64, listId int64) (interface{}, error) {
