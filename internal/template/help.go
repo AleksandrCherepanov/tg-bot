@@ -17,16 +17,14 @@ func NewHelpTemplate() *HelpTemplate {
 		"`/l` \\- get lists of user",
 		"`/lc name` \\- create list for user, where `name` is a name for you list",
 		"`/ls id` \\- set list as a current one, where `id` is identifier of your list",
-		"`/lg id` \\- get list, where `id` is identifier of your list",
 		"`/ld id` \\- delete list, where `id` is identifier of your list",
 		"`/lda` \\- delete all lists",
 		"`/t` \\- get tasks of current list",
-		"`/tg id` \\- get task of current list, where `id` is identifier of your task",
 		"`/tc name` \\- create task for current list, where `name` is a name of your task",
 		"`/td id` \\- delete task for current list, where `id` is identifier of your task",
 		"`/tda` \\- delete all tasks for current list",
 		"`/tm id` \\- mark task as done/undone for current list, where `id` is identifier of your task",
-		"`/tma` \\- mark all task as done/undone for current list",
+		"`/tma flag` \\- mark all task as done/undone for current list, where flag is 0 or 1, 0 \\- undone, 1 \\- done",
 	}
 
 	return t

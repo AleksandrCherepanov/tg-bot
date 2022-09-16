@@ -2,17 +2,15 @@ package command
 
 import (
 	"tg-bot/internal/template"
-	"tg-bot/pkg/telegram"
 	"tg-bot/pkg/telegram/client"
 )
 
 type CommandHelp struct {
-	chatId  int64
-	message *telegram.Message
+	chatId int64
 }
 
-func NewCommandHelp(chatId int64, message *telegram.Message) *CommandHelp {
-	return &CommandHelp{chatId, message}
+func NewCommandHelp(chatId int64) *CommandHelp {
+	return &CommandHelp{chatId}
 }
 
 func (c *CommandHelp) Handle(command string, args []string) (interface{}, error) {

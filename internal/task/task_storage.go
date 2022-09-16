@@ -83,13 +83,16 @@ func (taskStorage *TaskStorage) DeleteAllTasks() {
 	taskStorage.taskList = taskList
 }
 
-func (taskStorage *TaskStorage) Done(id int64) error {
+func (taskStorage *TaskStorage) Mark(id int64) error {
 	task, err := taskStorage.GetTask(id)
 	if err != nil {
 		return err
 	}
 
-	task.IsDone = true
+	taskStorage.Mutex.Lock()
+	defer taskStorage.Mutex.Unlock()
+
+	task.IsDone = !task.IsDone
 	taskStorage.taskList[id] = task
 	return nil
 }
@@ -107,12 +110,18 @@ func (taskStorage *TaskStorage) Undone(id int64) error {
 		return err
 	}
 
+	taskStorage.Mutex.Lock()
+	defer taskStorage.Mutex.Unlock()
+
 	task.IsDone = false
 	taskStorage.taskList[id] = task
 	return nil
 }
 
 func (taskStorage *TaskStorage) UndoneAll() {
+	taskStorage.Mutex.Lock()
+	defer taskStorage.Mutex.Unlock()
+
 	for i, t := range taskStorage.taskList {
 		t.IsDone = false
 		taskStorage.taskList[i] = t
