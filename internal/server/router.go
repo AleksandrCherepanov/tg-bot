@@ -65,7 +65,7 @@ func (router *Router) Resolve(w http.ResponseWriter, req *http.Request) {
 	if handleError != nil {
 		tgResponse, ok := handleError.(client.TelegramResponse)
 		if ok {
-			result, err = tgResponse.Send()
+			_, err = tgResponse.Send()
 			if err != nil {
 				ResponseError(w, err.Error())
 				return
@@ -76,7 +76,11 @@ func (router *Router) Resolve(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if tgResult, ok := result.(client.TelegramResponse); ok {
-		tgResult.Send()
+		_, err = tgResult.Send()
+		if err != nil {
+			ResponseError(w, err.Error())
+			return
+		}
 	}
 	ResponseJson(w, result)
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type Message struct {
-	MessageId                     int64                          `json:"messageId"`
+	MessageId                     int64                          `json:"message_id"`
 	From                          *user.User                     `json:"from"`
 	SenderChat                    *Chat                          `json:"sender_chat"`
 	Date                          int64                          `json:"date"`

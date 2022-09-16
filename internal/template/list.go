@@ -19,7 +19,7 @@ func NewAllListTemplate(lists []list.TaskList) *AllListTemplate {
 func (lt *AllListTemplate) GetText() (string, error) {
 	tmpl := template.New("all_lists")
 	text := ` 
-	You lists:
+	Your lists:
 {{range $index, $list := .Lists}}{{$list.Id}} \- {{$list.Name}}
 {{end}}
 `
