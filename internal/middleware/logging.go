@@ -4,8 +4,9 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"tg-bot/internal/server"
 	"time"
+
+	"github.com/AleksandrCherepanov/tg-bot/internal/server"
 )
 
 func Logging(next http.Handler) http.Handler {

@@ -3,7 +3,8 @@ package template
 import (
 	"bytes"
 	"text/template"
-	"tg-bot/internal/task"
+
+	"github.com/AleksandrCherepanov/tg-bot/internal/task"
 )
 
 type AllTaskTemplate struct {

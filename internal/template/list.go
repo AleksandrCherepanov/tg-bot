@@ -3,7 +3,8 @@ package template
 import (
 	"bytes"
 	"text/template"
-	"tg-bot/internal/list"
+
+	"github.com/AleksandrCherepanov/tg-bot/internal/list"
 )
 
 type AllListTemplate struct {

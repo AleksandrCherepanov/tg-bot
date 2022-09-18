@@ -3,9 +3,10 @@ package server
 import (
 	"encoding/json"
 	"net/http"
-	"tg-bot/internal/command"
-	"tg-bot/pkg/telegram"
-	"tg-bot/pkg/telegram/client"
+
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram"
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram/client"
+	"github.com/AleksandrCherepanov/tg-bot/internal/command"
 )
 
 type Router struct {
