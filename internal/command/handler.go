@@ -2,8 +2,9 @@ package command
 
 import (
 	"strings"
-	"tg-bot/pkg/telegram"
-	"tg-bot/pkg/telegram/client"
+
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram"
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram/client"
 )
 
 const unknownCommand = "/unknown"

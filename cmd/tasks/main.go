@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
-	"tg-bot/internal/middleware"
-	"tg-bot/internal/server"
-	"tg-bot/pkg/config"
 
+	config "github.com/AleksandrCherepanov/go_telegram/pkg/telegram/config"
+	"github.com/AleksandrCherepanov/tg-bot/internal/middleware"
+	"github.com/AleksandrCherepanov/tg-bot/internal/server"
 	"github.com/gorilla/mux"
 )
 

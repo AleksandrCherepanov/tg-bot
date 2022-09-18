@@ -3,7 +3,8 @@ package user
 import (
 	"fmt"
 	"sync"
-	"tg-bot/internal/list"
+
+	"github.com/AleksandrCherepanov/tg-bot/internal/list"
 )
 
 type User struct {

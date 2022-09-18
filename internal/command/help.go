@@ -1,8 +1,8 @@
 package command
 
 import (
-	"tg-bot/internal/template"
-	"tg-bot/pkg/telegram/client"
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram/client"
+	"github.com/AleksandrCherepanov/tg-bot/internal/template"
 )
 
 type CommandHelp struct {

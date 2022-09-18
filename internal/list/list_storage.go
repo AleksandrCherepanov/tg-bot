@@ -3,7 +3,8 @@ package list
 import (
 	"fmt"
 	"sync"
-	"tg-bot/internal/task"
+
+	"github.com/AleksandrCherepanov/tg-bot/internal/task"
 )
 
 type TaskList struct {

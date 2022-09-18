@@ -1,10 +1,10 @@
 package command
 
 import (
-	"tg-bot/internal/template"
-	"tg-bot/internal/user"
-	"tg-bot/pkg/telegram"
-	"tg-bot/pkg/telegram/client"
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram"
+	"github.com/AleksandrCherepanov/go_telegram/pkg/telegram/client"
+	"github.com/AleksandrCherepanov/tg-bot/internal/template"
+	"github.com/AleksandrCherepanov/tg-bot/internal/user"
 )
 
 type CommandStart struct {
